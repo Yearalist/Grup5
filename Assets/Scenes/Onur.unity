@@ -3346,7 +3346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b542ec9a2fa71954ea02a331f9daeaa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  riseSpeed: 10
+  riseSpeed: 0.1
   maxHeight: -0.4
   waterLevelSlider: {fileID: 935738554}
   playerTag: Player
@@ -9666,8 +9666,8 @@ GameObject:
   - component: {fileID: 1430069837}
   - component: {fileID: 1430069836}
   - component: {fileID: 1430069835}
-  m_Layer: 0
-  m_Name: aral_son_0 (1)
+  m_Layer: 3
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
