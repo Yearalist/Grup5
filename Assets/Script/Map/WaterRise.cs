@@ -1,20 +1,22 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement; 
 
-public class WaterRiseWithSlider : MonoBehaviour
+public class WaterRiseWithReset : MonoBehaviour
 {
-    [SerializeField] private float riseSpeed = 0.5f; // Suyun yükselme hýzý
-    [SerializeField] private float maxHeight = 10f; // Suyun ulaþabileceði maksimum yükseklik
-    [SerializeField] private Slider waterLevelSlider; // Baðlý Slider UI elemaný
+    [SerializeField] private float riseSpeed = 0.5f; 
+    [SerializeField] private float maxHeight = 10f; 
+    [SerializeField] private Slider waterLevelSlider; 
+    [SerializeField] private string playerTag = "Player"; 
 
-    private float startY; // Suyun baþlangýç yüksekliði
+    private float startY; 
 
     void Start()
     {
-        // Su baþlangýç yüksekliðini kaydet
+
         startY = transform.position.y;
 
-        // Slider'ý baþlangýç deðerine ayarla
+
         if (waterLevelSlider != null)
         {
             waterLevelSlider.minValue = 0f;
@@ -25,12 +27,12 @@ public class WaterRiseWithSlider : MonoBehaviour
 
     void Update()
     {
-        // Suyu yükselt
+
         if (transform.position.y < maxHeight)
         {
             transform.position += new Vector3(0, riseSpeed * Time.deltaTime, 0);
 
-            // Slider'ý güncelle
+
             UpdateSlider();
         }
     }
@@ -39,9 +41,18 @@ public class WaterRiseWithSlider : MonoBehaviour
     {
         if (waterLevelSlider != null)
         {
-            // Suyun mevcut yüksekliðini maksimum yüksekliðe oranla hesapla
+
             float progress = Mathf.Clamp01((transform.position.y - startY) / (maxHeight - startY));
-            waterLevelSlider.value = progress * 100f; // Slider'ý 0-100 arasý deðer alacak þekilde güncelle
+            waterLevelSlider.value = progress * 100f; 
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.CompareTag(playerTag))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }
