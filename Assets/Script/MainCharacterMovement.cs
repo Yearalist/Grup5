@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class MainCharacterMovement : MonoBehaviour
 {
@@ -14,6 +16,14 @@ public class MainCharacterMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private bool isGrounded;
+    private int collectedObjects = 0;
+
+    // Obje toplama
+    public List<GameObject> inventory = new List<GameObject>();
+    public Transform objectHoldPoint;
+
+    // Fırlatma hızı
+    public float throwForce = 5f;
 
     void Start()
     {
@@ -34,6 +44,12 @@ public class MainCharacterMovement : MonoBehaviour
 
         // Yer kontrolü
         CheckGround();
+
+        // Mouse tıklaması ile obje fırlatma
+        if (Input.GetMouseButtonDown(0))
+        {
+            ThrowObject();
+        }
     }
 
     void Move()
@@ -61,6 +77,58 @@ public class MainCharacterMovement : MonoBehaviour
     {
         // Karakterin yerle temasını kontrol et
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Collectible")) // Obje toplama
+        {
+            inventory.Add(collision.gameObject);
+            collectedObjects++;
+            collision.gameObject.SetActive(false); // Objeyi sahneden gizle
+
+            // UI güncelleme
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.UpdateCollectedCount(collectedObjects);
+            }
+            else
+            {
+                Debug.LogWarning("UIManager Instance bulunamadı!");
+            }
+        }
+    }
+
+    void ThrowObject()
+    {
+        if (inventory.Count > 0)
+        {
+            GameObject obj = inventory[0];
+            inventory.RemoveAt(0); // Envanterden çıkar
+            collectedObjects--;
+
+            obj.SetActive(true); // Objeyi sahneye geri getir
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition.z = 0;
+            obj.transform.position = objectHoldPoint.position;
+
+            Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
+            if (objRb != null)
+            {
+                Vector2 throwDirection = (mousePosition - objectHoldPoint.position).normalized;
+                objRb.linearVelocity = throwDirection * throwForce; // Fırlatma hızı
+            }
+
+            // UI güncelleme
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.UpdateCollectedCount(collectedObjects);
+            }
+            else
+            {
+                Debug.LogWarning("UIManager Instance bulunamadı!");
+            }
+        }
     }
 
     void OnDrawGizmosSelected()
