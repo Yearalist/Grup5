@@ -81,21 +81,23 @@ public class MainCharacterMovement : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
+        
+     
         if (collision.CompareTag("Collectible")) // Obje toplama
         {
             inventory.Add(collision.gameObject);
             collectedObjects++;
-            collision.gameObject.SetActive(false); // Objeyi sahneden gizle
+        
+            // Rigidbody2D'yi bul ve yerçekimini sıfırla
+            Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.gravityScale = 0; // Yerçekimi başlangıçta sıfır
+                rb.linearVelocity = Vector2.zero; // Hareketi durdur
+            }
 
-            // UI güncelleme
-            if (UIManager.Instance != null)
-            {
-                UIManager.Instance.UpdateCollectedCount(collectedObjects);
-            }
-            else
-            {
-                Debug.LogWarning("UIManager Instance bulunamadı!");
-            }
+            collision.gameObject.SetActive(false); // Objeyi sahneden gizle
+            UIManager.Instance.UpdateCollectedCount(collectedObjects); // UI güncelle
         }
     }
 
@@ -108,26 +110,25 @@ public class MainCharacterMovement : MonoBehaviour
             collectedObjects--;
 
             obj.SetActive(true); // Objeyi sahneye geri getir
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePosition.z = 0;
             obj.transform.position = objectHoldPoint.position;
 
             Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
             if (objRb != null)
             {
+                // Fırlatma yönünü hesapla
+                Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                mousePosition.z = 0;
                 Vector2 throwDirection = (mousePosition - objectHoldPoint.position).normalized;
-                objRb.linearVelocity = throwDirection * throwForce; // Fırlatma hızı
+
+                // Fırlatma hızı uygula
+                objRb.linearVelocity = throwDirection * 5f;
+
+                // Yerçekimini geri aç
+                objRb.gravityScale = 1;
             }
 
-            // UI güncelleme
-            if (UIManager.Instance != null)
-            {
-                UIManager.Instance.UpdateCollectedCount(collectedObjects);
-            }
-            else
-            {
-                Debug.LogWarning("UIManager Instance bulunamadı!");
-            }
+            // UI'yi güncelle
+            UIManager.Instance.UpdateCollectedCount(collectedObjects);
         }
     }
 
