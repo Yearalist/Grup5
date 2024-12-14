@@ -29,6 +29,10 @@ public class MainCharacterMovement : MonoBehaviour
     {
         // Rigidbody2D bileşenini al
         rb = GetComponent<Rigidbody2D>();
+        if (objectHoldPoint == null)
+        {
+            Debug.LogError("ObjectHoldPoint Transform is not assigned! Please assign it in the Inspector.");
+        }
     }
 
     void Update()
@@ -105,26 +109,32 @@ public class MainCharacterMovement : MonoBehaviour
     {
         if (inventory.Count > 0)
         {
+            // Envanterden obje çıkar
             GameObject obj = inventory[0];
-            inventory.RemoveAt(0); // Envanterden çıkar
+            inventory.RemoveAt(0);
             collectedObjects--;
 
-            obj.SetActive(true); // Objeyi sahneye geri getir
+            // Objeyi aktif hale getir ve karakterin biraz yukarısına yerleştir
+            obj.SetActive(true);
             obj.transform.position = objectHoldPoint.position;
 
             Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
             if (objRb != null)
             {
+                // Mouse'un dünya koordinatını al
+                Vector3 mouseScreenPosition = Input.mousePosition; // Mouse'un ekran pozisyonu
+                Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition); // Dünya pozisyonuna çevir
+                mouseWorldPosition.z = 0; // Z eksenini sıfırla (2D dünyada çalışıyoruz)
+
                 // Fırlatma yönünü hesapla
-                Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mousePosition.z = 0;
-                Vector2 throwDirection = (mousePosition - objectHoldPoint.position).normalized;
+                Vector2 throwDirection = (mouseWorldPosition - obj.transform.position).normalized;
 
-                // Fırlatma hızı uygula
-                objRb.linearVelocity = throwDirection * 5f;
+                // Fırlatma kuvveti uygula
+                float throwForce = 10f; // Fırlatma kuvveti
+                objRb.linearVelocity = throwDirection * throwForce;
 
-                // Yerçekimini geri aç
-                objRb.gravityScale = 1;
+                // Yerçekimini etkinleştir
+                objRb.gravityScale = 5;
             }
 
             // UI'yi güncelle
