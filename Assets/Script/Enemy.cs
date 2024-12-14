@@ -22,8 +22,8 @@ public class Enemy : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         _enemyPos = gameObject.transform.position;
-        _enemyPointA = _enemyPos + Vector3.left * 3f;
-        _enemyPointB = _enemyPos + Vector3.right * 3f;
+        _enemyPointA = _enemyPos + Vector3.left * 0.5f;
+        _enemyPointB = _enemyPos + Vector3.right * 0.5f;
 
         //Debug.Log(_enemyPointA + "a");
         //Debug.Log(_enemyPointB + "b");
