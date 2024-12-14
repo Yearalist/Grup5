@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      flag-pixel-art-free-vector_0: 485088922079837286
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
