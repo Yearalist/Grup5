@@ -49,10 +49,11 @@ public class WaterRiseWithReset : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-
+        Debug.Log("OnTriggerEnter2D tetiklendi, çarpýþan obje: " + collision.gameObject.name);
         if (collision.CompareTag(playerTag))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Debug.Log("Temas var");
+            SceneManager.LoadScene("Menu");
         }
     }
 }
